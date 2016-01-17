@@ -14,7 +14,7 @@ ZmcImageBundle Documentation
 
 #### Simply use composer to install the bundle
 
-    composer require zmc/image-bundle
+    composer require zmc/image-bundle:dev-master
 
 ### Step 2) Register new bundle
 
