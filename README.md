@@ -73,6 +73,9 @@ Firstly you need to create FormType class and just use our form type as field:
                 /* optional parameters */
                 'imagine_filter' => 'thumb', // filter name configured for LiipImagineBundle
                 
+                /* acceptable files to upload. Patterns and acceptable parameters you can see there http://www.w3schools.com/tags/att_input_accept.asp */
+                'accept_file_type' => 'image/*',
+                
                 // here provided default value, you can pass any service name which implements
                 /* \Zmc\ImageBundle\Form\Handler\HandlerInterface */
                 'handler' => 'zmc_image.form.handler.upload',  
