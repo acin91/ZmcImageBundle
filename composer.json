@@ -12,7 +12,7 @@
 
   "require": {
     "symfony/framework-bundle": "~2.8",
-    "liip/imagine-bundle": "dev-master",
+    "liip/imagine-bundle": "dev-master"
   },
 
   "autoload": {
