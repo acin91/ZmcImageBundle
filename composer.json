@@ -1,5 +1,5 @@
 {
-  "name": "zmc/images-bundle",
+  "name": "zmc/image-bundle",
   "description": "Symfony2 bundle for files uploading and images processing",
   "keywords": ["images","symfony", "crop", "upload"],
   "license": "MIT",
@@ -17,11 +17,11 @@
 
   "autoload": {
     "psr-0": {
-      "Zmc\\ImagesBundle": ""
+      "Zmc\\ImageBundle": ""
     }
   },
 
-  "target-dir": "Zmc/ImagesBundle",
+  "target-dir": "Zmc/ImageBundle",
 
   "extra": {
     "branch-alias": {
