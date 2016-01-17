@@ -1,0 +1,72 @@
+{% block file_upload_hidden_widget %}
+    {% spaceless %}
+        <div class="control-group" container-for="{{ unique_key }}">
+            {{ form_label(form) }}
+            <div class="controls">
+                <span image-role="container_{{ form.vars.id }}_{{ unique_key }}">
+                {% if form.vars.value is not null and form.vars.value != "" %}
+                    {% if imagine_filter %}
+                        <img src="{{ form.vars.value|imagine_filter(imagine_filter) }}" />
+                    {% else %}
+                        <img src="{{ form.vars.value }}" />
+                    {% endif %}
+
+                {% endif %}
+                </span>
+
+                {% include 'ZmcImageBundle::form_modal.html.twig' with {'id': form.vars.id, 'unique_key': unique_key} only %}
+
+                {{ form_widget(form) }}
+                <a class="btn btn-primary" image-role="call-form-{{ form.vars.id }}" image-destination="{{ form.vars.id }}">{{ 'image_upload.btn.change'|trans }}</a>
+            </div>
+        </div>
+
+        <script>
+            $(document).on('ready', function() {
+                var modal = '[data-destination={{ form.vars.id }}]';
+                var modalForm = '[data-destination={{ form.vars.id }}] [role=form]';
+
+                var bindForm = function() {
+                    $(modal + ' button[data-unique-key={{ unique_key }}]').on('click', function() {
+                        var formData = new FormData();
+
+                        var fileInputElement = $(modalForm + ' input[type=file]')[0];
+                        var fieldName = $(modalForm + ' input[type=file]').attr('name');
+                        formData.append(fieldName, fileInputElement.files[0]);
+
+                        var action = $(modalForm).attr('action');
+                        var request = new XMLHttpRequest();
+                        request.open('POST', action);
+
+                        request.onload = function(e) {
+                            if (request.status == 200) {
+                                var data = JSON.parse(request.response);
+                                console.log(data);
+                                $('[image-role=container_{{ form.vars.id }}_{{ unique_key }}]').html('<img src="'+data['preview_path']+'" />');
+                                $('[container-for={{ unique_key }}] input[type=hidden]').val(data['web_path']);
+                                $(modal).modal('hide');
+                            } else {
+                                alert('error occurred!');
+                            }
+                        };
+
+                        request.send(formData);
+                    });
+                };
+
+                $("[image-role=call-form-{{ form.vars.id }}]").on('click', function() {
+                    if ($('[data-destination={{ form.vars.id }}]').length > 0 && $('[data-destination={{ form.vars.id }}]').hasClass('modal')) {
+                        $.get('{{ path('zmc_image_index') }}', {'unique_key': '{{ unique_key }}'}, function(response) {
+                            $(modalForm).html(response);
+                            $(modal).modal('show');
+
+                            bindForm();
+                        });
+                    }
+                });
+
+            });
+
+        </script>
+    {% endspaceless %}
+{% endblock %}
