@@ -52,7 +52,9 @@ class FileUploadHiddenType extends AbstractType
         $resolver->setDefaults(array(
             'handler' => 'zmc_image.form.handler.upload',
             'accept_file_type' => 'image/*',
-            'imagine_filter' => null
+            'imagine_filter' => null,
+            'allow_multiple' => false,
+            'allow_crop' => false,
         ));
     }
 
@@ -67,6 +69,8 @@ class FileUploadHiddenType extends AbstractType
             'imagine_filter' => $options['imagine_filter'],
             'options' => array(
                 'accept_file_type' => $options['accept_file_type'],
+                'allow_multiple' => $options['allow_multiple'],
+                'allow_crop' => $options['allow_crop']
             ),
             'handler_options' => array(
                 'save_path' => $options['save_path'],
@@ -79,6 +83,7 @@ class FileUploadHiddenType extends AbstractType
 
         $view->vars['unique_key'] = $uniqueKey;
         $view->vars['imagine_filter'] = $options['imagine_filter'];
+        $view->vars['allow_crop'] = $options['allow_crop'];
     }
 
     /**

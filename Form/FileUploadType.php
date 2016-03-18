@@ -19,11 +19,18 @@ class FileUploadType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $attributes = array(
+            'accept' => $options['accept_file_type']
+        );
+
+        if ($options['allow_multiple']) {
+            $attributes['multiple'] = 'multiple';
+        }
+
+
         $builder
             ->add('file', 'file', array(
-                'attr' => array(
-                    'accept' => $options['accept_file_type'],
-                )
+                'attr' => $attributes,
             ))
         ;
     }
@@ -35,6 +42,8 @@ class FileUploadType extends AbstractType
     {
         $resolver->setRequired(array(
             'accept_file_type',
+            'allow_multiple',
+            'allow_crop',
         ));
 
         $resolver->setDefaults(array(

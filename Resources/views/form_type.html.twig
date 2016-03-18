@@ -21,52 +21,9 @@
             </div>
         </div>
 
+        <script src="{{ asset('bundles/zmcimage/js/uploader.js') }}"></script>
         <script>
-            $(document).on('ready', function() {
-                var modal = '[data-destination={{ form.vars.id }}]';
-                var modalForm = '[data-destination={{ form.vars.id }}] [role=form]';
-
-                var bindForm = function() {
-                    $(modal + ' button[data-unique-key={{ unique_key }}]').on('click', function() {
-                        var formData = new FormData();
-
-                        var fileInputElement = $(modalForm + ' input[type=file]')[0];
-                        var fieldName = $(modalForm + ' input[type=file]').attr('name');
-                        formData.append(fieldName, fileInputElement.files[0]);
-
-                        var action = $(modalForm).attr('action');
-                        var request = new XMLHttpRequest();
-                        request.open('POST', action);
-
-                        request.onload = function(e) {
-                            if (request.status == 200) {
-                                var data = JSON.parse(request.response);
-                                console.log(data);
-                                $('[image-role=container_{{ form.vars.id }}_{{ unique_key }}]').html('<img src="'+data['preview_path']+'" />');
-                                $('[container-for={{ unique_key }}] input[type=hidden]').val(data['web_path']);
-                                $(modal).modal('hide');
-                            } else {
-                                alert('error occurred!');
-                            }
-                        };
-
-                        request.send(formData);
-                    });
-                };
-
-                $("[image-role=call-form-{{ form.vars.id }}]").on('click', function() {
-                    if ($('[data-destination={{ form.vars.id }}]').length > 0 && $('[data-destination={{ form.vars.id }}]').hasClass('modal')) {
-                        $.get('{{ path('zmc_image_index') }}', {'unique_key': '{{ unique_key }}'}, function(response) {
-                            $(modalForm).html(response);
-                            $(modal).modal('show');
-
-                            bindForm();
-                        });
-                    }
-                });
-
-            });
-
+            var upload = new ImageUploader('{{ unique_key }}', '{{ form.vars.id }}', '{{ path('zmc_image_index') }}', {{ allow_crop ? 1 : 0 }}, '{{ allow_crop ? path('zmc_image_crop') : '' }}');
         </script>
     {% endspaceless %}
 {% endblock %}

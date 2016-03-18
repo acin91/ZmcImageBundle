@@ -7,4 +7,8 @@
     <route id="zmc_image_index" path="/image-upload">
         <default key="_controller">ZmcImageBundle:Image:index</default>
     </route>
+
+    <route id="zmc_image_crop" path="/image-crop" methods="POST">
+        <default key="_controller">ZmcImageBundle:Image:crop</default>
+    </route>
 </routes>

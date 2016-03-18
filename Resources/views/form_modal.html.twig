@@ -8,8 +8,10 @@
             <div id="modal-form-{{ unique_key }}" class="modal-body" action="{{ path('zmc_image_index', {'unique_key': unique_key}) }}" method="post" role="form">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-unique-key="{{ unique_key }}">Save changes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'modal.close'|trans }}</button>
+                <button type="button" class="btn btn-danger" data-role="remove-image">{{ 'modal.delete_image'|trans }}</button>
+                <button type="button" class="btn btn-primary" data-role="save" data-unique-key="{{ unique_key }}">{{ 'modal.save'|trans }}</button>
+                <button type="button" class="btn btn-primary" data-role="crop-save" data-unique-key="{{ unique_key }}">{{ 'modal.crop_save'|trans }}</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

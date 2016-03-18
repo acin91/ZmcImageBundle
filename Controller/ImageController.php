@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Zmc\ImageBundle\Form\FileUploadType;
+use Zmc\ImageBundle\Form\Handler\CropHandlerInterface;
 use Zmc\ImageBundle\Form\Handler\HandlerInterface;
 
 /**
@@ -57,5 +58,36 @@ class ImageController extends Controller
             'form' => $form->createView(),
             'unique_key' => $key,
         ));
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
+    public function cropAction(Request $request)
+    {
+        $key = $request->get('unique_key');
+        if (!$request->getSession()->get($key)) {
+            return new Response('Key was not found.');
+        }
+
+        $settings = $request->getSession()->get($key);
+
+        if (!$this->container->has($settings['handler'])) {
+            return new Response('Handler was not found.');
+        }
+
+        $handler = $this->container->get($settings['handler']);
+        if (!$handler instanceof CropHandlerInterface) {
+            return new Response('Handler should be instance of CropHandlerInterface');
+        }
+
+        $outputData = $handler->crop($request->get('filename'), $request->get('coordinates'), $settings['handler_options']);
+
+        if ($settings['imagine_filter']) {
+            $outputData['preview_path'] = $this->get('liip_imagine.cache.manager')->getBrowserPath($outputData['web_path'], $settings['imagine_filter']);
+        }
+
+        return new JsonResponse($outputData);
     }
 }

@@ -1,0 +1,39 @@
+<div data-role="upload-multiple"></div>
+<script src="{{ asset('bundles/zmcimage/vendor/dropzone.js') }}"></script>
+<script>
+    var uniqueKey = $('{{ images_container }} li div[container-for]').attr('container-for');
+    var url = "{{ path('zmc_image_index') }}";
+
+    var imagesList = jQuery('{{ images_container }}');
+    var imagesCount = $('li', imagesList).length;
+
+    // grab the prototype template
+    var imageWidgetPrototype = imagesList.attr('data-prototype');
+
+    var dropZone = new Dropzone("div[data-role=upload-multiple]", {
+        paramName: 'file_upload[file]',
+        url: url + '?unique_key='+uniqueKey,
+        acceptedFiles: '{{ accepted_files }}',
+        success : function(file, response) {
+            var data = response;
+            if (data && data['web_path'] && data['preview_path']) {
+                var imageContainer = imageWidgetPrototype.replace(/__name__/g, imagesCount);
+                imagesCount++;
+
+                var value = data['web_path'];
+                var preview = '<img src="' + data['preview_path'] + '" />';
+
+
+                var hiddenId = $(imageContainer).find('input[type=hidden]').attr('id');
+                var previewContainer = $(imageContainer).find('span[image-role]').attr('image-role');
+
+                var newImg = jQuery('<li></li>').html(imageContainer);
+                newImg.appendTo(imagesList);
+
+                $('#' + hiddenId).val(value);
+                $('span[image-role='+previewContainer+']').html(preview);
+            }
+        }
+    });
+
+</script>

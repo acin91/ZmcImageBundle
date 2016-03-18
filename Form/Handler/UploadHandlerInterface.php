@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * @author Zmicier Aliakseyeu <z.aliakseyeu@gmail.com>
  */
-interface HandlerInterface
+interface UploadHandlerInterface
 {
     /**
      * @param UploadedFile $file

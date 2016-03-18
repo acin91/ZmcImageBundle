@@ -1,1 +1,19 @@
-{{ form_rest(form) }}
+<div data-role="upload-container">
+    {{ form_rest(form) }}
+</div>
+<div data-role="preview-container">
+    <img src="" />
+    <div data-role="percentage-overlay"></div>
+    <span data-role="percentage-counter"></span>
+</div>
+<div data-role="crop-container">
+    <img src="" />
+    <input type="hidden" name="crop_x_1" />
+    <input type="hidden" name="crop_x_2" />
+
+    <input type="hidden" name="crop_y_1" />
+    <input type="hidden" name="crop_y_2" />
+
+    <input type="hidden" name="crop_w" />
+    <input type="hidden" name="crop_h" />
+</div>
