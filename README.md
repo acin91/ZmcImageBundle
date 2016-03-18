@@ -28,6 +28,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
+        new Liip\ImagineBundle\LiipImagineBundle(),
         new Zmc\ImageBundle\ZmcImageBundle(),
     );
     // ...
@@ -46,6 +47,8 @@ zmc_image:
 # ... and some can go here. It's doesen't matter
 
 ```
+
+### Step 4) [Configure LiipImagineBundle](http://symfony.com/doc/current/bundles/LiipImagineBundle/index.html).
 
 <a name="usage"></a>
 
