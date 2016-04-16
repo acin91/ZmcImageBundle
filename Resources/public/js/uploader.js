@@ -1,5 +1,15 @@
 if ('undefined' === typeof ImageUploader) {
-    var ImageUploader = function(uniqueKey, inputId, uploadRoute, allowCrop, cropRoute) {
+    /**
+     *
+     * @param uniqueKey
+     * @param inputId
+     * @param uploadRoute
+     * @param allowCrop
+     * @param cropRoute
+     * @param cropBy
+     * @constructor
+     */
+    var ImageUploader = function(uniqueKey, inputId, uploadRoute, allowCrop, cropRoute, cropBy) {
         var modal = '[data-destination='+inputId+']';
         var modalForm = '[data-destination='+inputId+'] [role=form]';
 
@@ -56,17 +66,18 @@ if ('undefined' === typeof ImageUploader) {
 
         var jcrop_api;
 
-        var cropSize, realSize;
+        var cropSize, realSize, factor;
 
         /**
          *
          */
         var crop = function() {
 
+            var filename;
             if (uploadedImage) {
-                var filename = uploadedImage['web_path'].replace(/^.*[\\\/]/, '');
+                filename = uploadedImage['web_path'].replace(/^.*[\\\/]/, '');
             } else {
-                var filename = currentImage.replace(/^.*[\\\/]/, '');
+                filename = currentImage.replace(/^.*[\\\/]/, '');
             }
 
             var data = {
@@ -87,20 +98,6 @@ if ('undefined' === typeof ImageUploader) {
                 uploadedImage = response;
                 save();
             });
-        };
-
-        var _updateCoords = function(coords) {
-            var factor = realSize.width / cropSize.width;
-            $(cropContainer + ' input[name=crop_x_1]').val(coords.x * factor);
-            $(cropContainer + ' input[name=crop_x_2]').val(coords.x2 * factor);
-            $(cropContainer + ' input[name=crop_y_1]').val(coords.y * factor);
-            $(cropContainer + ' input[name=crop_y_2]').val(coords.y2 * factor);
-            $(cropContainer + ' input[name=crop_w]').val(coords.w * factor);
-            $(cropContainer + ' input[name=crop_h]').val(coords.h * factor);
-        };
-
-        var _clearCoords = function() {
-            $(cropContainer + ' input[type=hidden]').val('');
         };
 
 
@@ -124,24 +121,50 @@ if ('undefined' === typeof ImageUploader) {
                     realSize = {
                         width: this.width,
                         height: this.height
-                    }
+                    };
+                    factor = realSize.width / cropSize.width;
                 });
             });
 
-            $(cropContainer + ' img').Jcrop({
+            var options = {
                 onChange:   _updateCoords,
                 onSelect:   _updateCoords,
                 onRelease:  _clearCoords,
                 addClass: 'jcrop-centered',
                 boxWidth: 400,
                 boxHeight: 400
-            },function(){
+            };
+
+            if (cropBy['ratio'] > 0) {
+                options['aspectRatio'] = cropBy['ratio'];
+            } else if (cropBy['size']['w'] > 0 || cropBy['size']['h'] > 0) {
+                options['setSelect'] = [0, 0, cropBy['size']['w'], cropBy['size']['h']];
+                options['allowResize'] = false;
+                options['aspectRatio'] = 1;
+                options['minSize'] = [cropBy['size']['w'], cropBy['size']['h']];
+                options['maxSize'] = [cropBy['size']['w'], cropBy['size']['h']];
+            }
+
+            $(cropContainer + ' img').Jcrop(options,function(){
                 jcrop_api = this;
             });
 
             $(removeImageBtn).show();
             $(cropSaveBtn).show();
             $(saveBtn).hide();
+        };
+
+        var _updateCoords = function(coords) {
+            $(cropContainer + ' input[name=crop_x_1]').val(coords.x * factor);
+            $(cropContainer + ' input[name=crop_x_2]').val(coords.x2 * factor);
+            $(cropContainer + ' input[name=crop_y_1]').val(coords.y * factor);
+            $(cropContainer + ' input[name=crop_y_2]').val(coords.y2 * factor);
+            $(cropContainer + ' input[name=crop_w]').val(coords.w * factor);
+            $(cropContainer + ' input[name=crop_h]').val(coords.h * factor);
+        };
+
+        var _clearCoords = function() {
+            $(cropContainer + ' input[type=hidden]').val('');
         };
 
         var unbindCrop = function() {

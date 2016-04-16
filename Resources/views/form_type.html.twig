@@ -23,7 +23,27 @@
 
         <script src="{{ asset('bundles/zmcimage/js/uploader.js') }}"></script>
         <script>
-            var upload = new ImageUploader('{{ unique_key }}', '{{ form.vars.id }}', '{{ path('zmc_image_index') }}', {{ allow_crop ? 1 : 0 }}, '{{ allow_crop ? path('zmc_image_crop') : '' }}');
+            var cropRatio = null;
+            {% if crop_by_ratio is not null %}
+                cropRatio = {{ crop_by_ratio }};
+            {% endif %}
+
+
+            var cropSize = {};
+            {% if crop_by_size is not null %}
+                cropSize  = {
+                    'w': {{ crop_by_size.w }},
+                    'h': {{ crop_by_size.h }}
+                };
+            {% endif %}
+
+            var allowCrop = {{ allow_crop ? 1 : 0 }};
+            var cropPath = '{{ allow_crop ? path('zmc_image_crop') : '' }}';
+
+            var upload = new ImageUploader('{{ unique_key }}', '{{ form.vars.id }}', '{{ path('zmc_image_index') }}', allowCrop, cropPath, {
+                'ratio': cropRatio,
+                'size': cropSize
+            });
         </script>
     {% endspaceless %}
 {% endblock %}

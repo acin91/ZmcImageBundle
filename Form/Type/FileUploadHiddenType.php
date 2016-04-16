@@ -55,6 +55,8 @@ class FileUploadHiddenType extends AbstractType
             'imagine_filter' => null,
             'allow_multiple' => false,
             'allow_crop' => false,
+            'crop_by_size' => null,
+            'crop_by_ratio' => null,
         ));
     }
 
@@ -63,6 +65,18 @@ class FileUploadHiddenType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        if (null !== $options['crop_by_ratio'] && null !== $options['crop_by_size'] && true === (bool) $options['allow_crop']) {
+            throw new \InvalidArgumentException('Multiple crop strategies at the same field are not allowed.');
+        }
+
+        if (null !== $options['crop_by_size'] && (
+            !is_array($options['crop_by_size']) ||
+            !isset($options['crop_by_size']['w']) ||
+            !isset($options['crop_by_size']['h'])
+        )) {
+            throw new \InvalidArgumentException('crop_by_size requires array [w => [int], h => [int]].');
+        }
+
         $uniqueKey = md5(microtime().rand());
         $sessionData = array(
             'handler' => $options['handler'],
@@ -70,7 +84,9 @@ class FileUploadHiddenType extends AbstractType
             'options' => array(
                 'accept_file_type' => $options['accept_file_type'],
                 'allow_multiple' => $options['allow_multiple'],
-                'allow_crop' => $options['allow_crop']
+                'allow_crop' => $options['allow_crop'],
+                'crop_by_size' => $options['crop_by_size'],
+                'crop_by_ratio' => $options['crop_by_ratio'],
             ),
             'handler_options' => array(
                 'save_path' => $options['save_path'],
@@ -84,6 +100,8 @@ class FileUploadHiddenType extends AbstractType
         $view->vars['unique_key'] = $uniqueKey;
         $view->vars['imagine_filter'] = $options['imagine_filter'];
         $view->vars['allow_crop'] = $options['allow_crop'];
+        $view->vars['crop_by_ratio'] = $options['crop_by_ratio'];
+        $view->vars['crop_by_size'] = $options['crop_by_size'];
     }
 
     /**

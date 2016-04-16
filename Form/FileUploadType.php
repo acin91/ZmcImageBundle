@@ -27,7 +27,6 @@ class FileUploadType extends AbstractType
             $attributes['multiple'] = 'multiple';
         }
 
-
         $builder
             ->add('file', 'file', array(
                 'attr' => $attributes,
@@ -48,6 +47,8 @@ class FileUploadType extends AbstractType
 
         $resolver->setDefaults(array(
             'csrf_protection' => false,
+            'crop_by_size' => null,
+            'crop_by_ratio' => null,
         ));
     }
 
